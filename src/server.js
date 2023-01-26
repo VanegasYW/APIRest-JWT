@@ -25,7 +25,7 @@ class Server {
     }
 
     routes() {
-        // Use the "users, "auth", "register" and " "register" routes for requests to the "/api/users", "/api/auth", "/api/register" and "/api/profile"   endpoints
+        // Use the "users", "auth", "register" and "profile" routes for requests to the "/api/users", "/api/auth", "/api/register" and "/api/profile" endpoints
         this.app.use("/api/users/", require("../public/routes/users.routes"))
         this.app.use("/api/auth/", require("../public/routes/auth.routes"))
         this.app.use("/api/register/", require("../public/routes/register.routes"))

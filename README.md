@@ -15,3 +15,14 @@ npm i
 ```
 npm start
 ```
+### Endpoints
+The API has the following endpoints:
+
+- POST `/register`: Register a new user.
+- POST `/auth`: Log in an existing user.
+- GET `/profile`: Get the current user's profile.
+* GET `/users`: Get a list of all users.
+    * GET `/users/:id`: Retrieve a specific user by their ID.
+    * POST `/users:` Create a new user.
+    * PUT `/users/:id`: Update an existing user by their ID.
+    * DELETE `/users/:id`: Delete an existing user by their ID.
