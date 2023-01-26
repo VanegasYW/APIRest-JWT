@@ -4,35 +4,35 @@ const generateJWT = require("../helpers/generateJWT")
 
 const userAuthentication = async (req, res) => {
     try {
-        const { nombre, clave } = req.body
+        const { nombre, clave } = req.body // Destructure the request body to retrieve the user's name and password
+        const user = await User.findOne({ nombre }) 
 
-        const user = await User.findOne({ nombre })
+        if (!user) return res.status(404).json({
+            success: false,
+            message: 'User not found'
+        });
 
-        if (!user) return res.json({
-            "ok": 200,
-            "msg": "El usuario no existe"
-        })
+        const isMatch = bcryptjs.compareSync(clave, user.clave) // Compare the provided password with the hashed password in the database
 
-        const compareClave = bcryptjs.compareSync(clave, user.clave)
+        if (!isMatch) return res.status(401).json({  // Compare the provided password with the hashed password in the database
+            success: false,
+            message: 'Incorrect password'
+        });
 
-        if (!compareClave) return res.json({
-            "ok": 200,
-            "msg": "La clave no coincide"
-        })
+        const token = await generateJWT(user._id, user.nombre, user.correo) // Generate a JWT for the user
 
-        const token = await generateJWT(user.nombre, user.correo, user.clave, user.estado)
-
-        res.json({
-            "ok": 200,
-            "msg": "Token creado",
+        res.status(200).json({ // Return the JWT to the user
+            success: true,
+            message: 'Token created',
             token
-        })
+        });
     } catch (error) {
-        res.status(500).json({
-            "ok": 500,
-            "msg": "Error de la página"
+        res.status(500).json({ // Handle errors by returning a 500 status and an error message
+            success: false,
+            message: 'Server error'
         })
     }
 }
 
+// Export the userAuthentication function for use in other modules
 module.exports = userAuthentication

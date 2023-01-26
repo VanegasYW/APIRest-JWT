@@ -2,66 +2,69 @@ const { check, validationResult } = require('express-validator')
 const User = require('../models/users.model');
 
 const validateErrors = (req, res, next) => {
-    const error = validationResult(req)
+    const error = validationResult(req) // Get the validation result from the request
 
-    if (!error.isEmpty()) return res.status(404).json(
-        error.errors
-    );
+    if (!error.isEmpty()) return res.status(404).json(error.errors); // If there are errors, return a 404 status code and the error messages
 
-    next()
+    next() // If there are no errors, call the next middleware function
 }
 
 const usersDoNotExist = async (req, res, next) => {
     const users = await User.find()
-    if(users.length == 0) return res.json({
-        "ok": 200,
-        "msg": "No hay usuarios en la base de datos"
+
+    if (!users.length) return res.status(404).json({
+        success: false,
+        message: 'Users not found'
     })
 
-    next()
+    next() // If there are users, call the next middleware function
 }
 
 const userDoesNotExist = async (req, res, next) => {
-    const {id} = req.params
+    const { id } = req.params // Destructuring the id parameter from the request parameters
 
     const user = await User.findById(id)
 
-    if(!user) return res.json({
-        "msg": "Usuario no encontrado"
+    if (!user) return res.status(404).json({
+        success: false,
+        message: 'User not found'
     })
 
-    next()
+    next() // If the user is found, call the next middleware function
 }
 
 const emailAlreadyExists = async (req, res, next) => {
-    const {correo} = req.body
+    const { correo } = req.body// Destructuring the email from the request body
+    const existingUser = await User.findOne({ correo });
 
-    if(await User.findOne({correo})) return res.json({
-        "ok": 200,
-        "msg": "El correo ya está registrado"
+    if (existingUser) return res.status(404).json({
+        success: false,
+        message: 'Email already exists'
     })
 
-    next()
+    next() // If the email is not already registered, call the next middleware function
 }
 
+// Array of validation checks for user input
 const validators = [
     check("nombre")
-        .notEmpty()
-        .withMessage("El nombre es requerido")
-        .isLength({ min: 3 })
-        .withMessage("La longitud mínima de carácteres es de 3"),
+        .notEmpty() // Check that the field is not empty
+        .withMessage("Name is required")
+        .isLength({ min: 3 }) // Check that the field has at least 3 characters
+        .withMessage("Min character length is 3"),
     check("correo")
-        .notEmpty()
-        .withMessage("El correo es requerido")
-        .isEmail()
-        .withMessage("Formato de correo incorrecto"),
+        .notEmpty() // Check that the field is not empty
+        .withMessage("Email is required")
+        .isEmail() // Check that the field is in the format of an email address
+        .withMessage("Invalid email format"),
     check("clave")
-        .notEmpty()
-        .withMessage("El nombre es requerido")
-        .isLength({ min: 6, max: 10 })
-        .withMessage("La longitud mínima de carácteres es de 6 y máxima de 10")
+        .notEmpty() // Check that the field is not empty
+        .withMessage("Password is required")
+        .isLength({ min: 6, max: 10 }) // Check that the field has at least 6 characters and at most 10
+        .withMessage("Min character length is 6 and max is 10")
 ]
 
+// Exports the middleware functions and validation checks for use in other parts of the application
 module.exports = {
     validators,
     validateErrors,

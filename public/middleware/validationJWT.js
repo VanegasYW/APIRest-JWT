@@ -1,29 +1,26 @@
 const jwt = require('jsonwebtoken');
-const {request, response} = require("express")
 
 const validationJWT = (req, res, next) => {
+    const token = req.header("x-validation") // Get the token from the request header
 
-    const token = req.header("x-validation")
-    
-    if(!token) return res.json({
-        "ok": 200,
-        "msg": "El token no fue ingresado"
-    })
+    if (!token) return res.status(401).json({ // if no token is present
+        message: "No token provided"
+    });
 
     try {
-        const validation = jwt.verify(token, process.env.SECRET_KEY)
+        const validation = jwt.verify(token, process.env.SECRET_KEY) // Verify the token using the secret key specified in the SECRET_KEY environment variable
         // res.json({
         //     validation: validation
         // })
     } catch (error) {
 
-        res.json({
-            "ok": 200,
-            "msg": "El token no coincide"
-        })
+        return res.status(401).json({
+            message: "Invalid token"
+        });
     }
 
-    next()
+    next() // Move to the next middleware
 }
 
+// Export the middleware function to be used in other parts of the application.
 module.exports = validationJWT

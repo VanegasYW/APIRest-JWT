@@ -1,6 +1,6 @@
 const {Schema, model} = require("mongoose")
 
-const schema = new Schema(
+const UserSchema  = new Schema(
     {
         nombre: {
             type: String,
@@ -10,10 +10,6 @@ const schema = new Schema(
             type: String,
             unique: true,
             required: true,
-        },
-        telefono: {
-            type: String,
-            required: false,
         },
         fecha: {
             type: Date,
@@ -30,4 +26,4 @@ const schema = new Schema(
     }
 )
 
-module.exports = model("users", schema)
+module.exports = model("User", UserSchema )
