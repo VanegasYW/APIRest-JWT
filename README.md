@@ -15,7 +15,7 @@ npm i
 ```
 npm start
 ```
-### Endpoints
+### 🌐 Endpoints
 The API has the following endpoints:
 
 - POST `/register`: Register a new user.
@@ -26,3 +26,5 @@ The API has the following endpoints:
     * POST `/users:` Create a new user.
     * PUT `/users/:id`: Update an existing user by their ID.
     * DELETE `/users/:id`: Delete an existing user by their ID.
+      
+### 🛠 [Stack Used](techstack.md)
