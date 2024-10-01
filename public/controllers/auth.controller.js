@@ -5,7 +5,7 @@ const generateJWT = require("../helpers/generateJWT")
 const userAuthentication = async (req, res) => {
     try {
         const { nombre, clave } = req.body // Destructure the request body to retrieve the user's name and password
-        const user = await User.findOne({ nombre }) 
+        const user = await User.findOne({ nombre: { $eq: nombre } }) 
 
         if (!user) return res.status(404).json({
             success: false,
